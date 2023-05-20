@@ -4,6 +4,8 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+
 function Game() {
   const [clientRendered, setClientRendered] = useState(false);
   const [images, setImages] = useState([]);
@@ -31,7 +33,7 @@ function Game() {
       const data = await response.json();
       setImages(data.images);
       */
-
+      /*
       const imageArr = [
         'https://fastly.picsum.photos/id/996/200/200.jpg?hmac=nRtkfqKyD3p2uHiFO5LmGt31UcH3NKWg80H5yUkZ8_k',
         'https://fastly.picsum.photos/id/818/200/200.jpg?hmac=gfhJZngz3JDsSmE1obNFY5OeAQBVsJLED2VkwuGsC-o',
@@ -64,7 +66,21 @@ function Game() {
         'https://fastly.picsum.photos/id/933/200/200.jpg?hmac=OW5v0bUFqC97kOeYWLjXhU-5mkb6atERs7CrqdPlRfs',
         'https://fastly.picsum.photos/id/1035/200/200.jpg?hmac=IDuYUZQ_7a6h4pQU2k7p2nxT-MjMt4uy-p3ze94KtA4'
       ];
-      setImages(shuffleArray(imageArr));
+      */
+
+      try {
+        const response = await fetch(
+          'https://api.unsplash.com/photos/random?count=15&query=nature&client_id=' + unsplashAccessKey
+        );
+        const data = await response.json();
+        const imageUrls = data.map((image) => image.urls.regular);
+        // Duplicating array elements
+        const imagesArr = imageUrls.flatMap((element) => [element, element]);
+        setImages(shuffleArray(imagesArr));
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+      // setImages(shuffleArray(imageArr));
     };
 
     fetchImages();
