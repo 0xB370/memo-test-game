@@ -8,6 +8,7 @@ function Game() {
   const [images, setImages] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedCards, setMatchedCards] = useState([]);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     // Fetch or generate the array of 30 image URLs
@@ -73,6 +74,7 @@ function Game() {
           setFlippedCards([]); // Reset flippedCards
         }, 1000);
       }
+      setRetryCount((prevRetryCount) => prevRetryCount + 1); // Increment retryCount
     }
   }, [flippedCards]);
 
@@ -92,6 +94,9 @@ function Game() {
         // If there is a match, add the cards to the matchedCards state
         setMatchedCards((prevMatchedCards) => [...prevMatchedCards, flippedCards[0], index]);
         setFlippedCards([]);
+  
+        // Increment the retry count
+        setRetryCount((prevRetryCount) => prevRetryCount + 1);
       } else {
         // If there is no match, flip the cards back after a short delay
         setTimeout(() => {
@@ -99,7 +104,7 @@ function Game() {
         }, 1000);
       }
     }
-  };
+  };  
 
   const renderGrid = () => {
     const gridSize = 6;
@@ -135,6 +140,7 @@ function Game() {
   return (
     <div className="container">
       <h1 className="title">Memory Game</h1>
+      <p>Retries: {retryCount}</p>
       {images.length > 0 ? renderGrid() : <p>Loading...</p>}
     </div>
   );  
