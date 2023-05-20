@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 function Game() {
   const [clientRendered, setClientRendered] = useState(false);
   const [images, setImages] = useState([]);
+  const [flippedCards, setFlippedCards] = useState([]);
+  const [matchedCards, setMatchedCards] = useState([]);
 
   useEffect(() => {
     // Fetch or generate the array of 30 image URLs
@@ -57,8 +59,31 @@ function Game() {
   }, []);
 
   const handleClick = (index) => {
-    // Handle card click logic
-    // ...
+    if (flippedCards.length === 2) {
+      // If two cards are already flipped, ignore further clicks until they are flipped back
+      return;
+    }
+
+    if (flippedCards.includes(index)) {
+      // If the clicked card is already flipped, ignore the click
+      return;
+    }
+
+    // Flip the clicked card by adding it to the flippedCards state
+    setFlippedCards((prevFlippedCards) => [...prevFlippedCards, index]);
+
+    if (flippedCards.length === 1) {
+      // If this is the second flipped card, check for a match
+      if (images[flippedCards[0]] === images[index]) {
+        // If there is a match, add the cards to the matchedCards state
+        setMatchedCards((prevMatchedCards) => [...prevMatchedCards, flippedCards[0], index]);
+      } else {
+        // If there is no match, flip the cards back after a short delay
+        setTimeout(() => {
+          setFlippedCards([]);
+        }, 1000);
+      }
+    }
   };
 
   const renderGrid = () => {
@@ -71,11 +96,13 @@ function Game() {
         {images.slice(0, totalCards).map((image, index) => (
           <div
             key={index}
-            className="card"
+            className={`card ${flippedCards.includes(index) ? 'flipped' : ''} ${
+              matchedCards.includes(index) ? 'matched' : ''
+            }`}
             onClick={() => handleClick(index)}
           >
-            <img src={image} alt={`Card ${index}`} className="card-image" />
-            <div className="card-overlay"></div>
+            <div className="card-back"></div>
+            <img src={image} alt={`Card ${index}`} className="card-front" />
           </div>
         ))}
       </div>
