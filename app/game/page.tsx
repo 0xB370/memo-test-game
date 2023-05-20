@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useState } from 'react';
 
 function Game() {
@@ -58,25 +59,39 @@ function Game() {
     setClientRendered(true);
   }, []);
 
-  const handleClick = (index) => {
+  useEffect(() => {
     if (flippedCards.length === 2) {
-      // If two cards are already flipped, ignore further clicks until they are flipped back
+      // If this is the second flipped card, check for a match
+      const [card1, card2] = flippedCards;
+      if (images[card1] === images[card2]) {
+        // If there is a match, add the cards to the matchedCards state
+        setMatchedCards((prevMatchedCards) => [...prevMatchedCards, card1, card2]);
+        setFlippedCards([]); // Reset flippedCards
+      } else {
+        // If there is no match, flip the cards back after a short delay
+        setTimeout(() => {
+          setFlippedCards([]); // Reset flippedCards
+        }, 1000);
+      }
+    }
+  }, [flippedCards]);
+
+
+  const handleClick = (index) => {
+    if (flippedCards.length === 2 || flippedCards.includes(index)) {
+      // If two cards are already flipped or the clicked card is already flipped, ignore the click
       return;
     }
-
-    if (flippedCards.includes(index)) {
-      // If the clicked card is already flipped, ignore the click
-      return;
-    }
-
+  
     // Flip the clicked card by adding it to the flippedCards state
     setFlippedCards((prevFlippedCards) => [...prevFlippedCards, index]);
-
+  
     if (flippedCards.length === 1) {
       // If this is the second flipped card, check for a match
       if (images[flippedCards[0]] === images[index]) {
         // If there is a match, add the cards to the matchedCards state
         setMatchedCards((prevMatchedCards) => [...prevMatchedCards, flippedCards[0], index]);
+        setFlippedCards([]);
       } else {
         // If there is no match, flip the cards back after a short delay
         setTimeout(() => {
@@ -85,36 +100,46 @@ function Game() {
       }
     }
   };
+  
+
 
   const renderGrid = () => {
     const gridSize = 6;
     const rowSize = 5;
     const totalCards = gridSize * rowSize;
-
+  
     return (
       <div className="card-container">
-        {images.slice(0, totalCards).map((image, index) => (
-          <div
-            key={index}
-            className={`card ${flippedCards.includes(index) ? 'flipped' : ''} ${
-              matchedCards.includes(index) ? 'matched' : ''
-            }`}
-            onClick={() => handleClick(index)}
-          >
-            <div className="card-back"></div>
-            <img src={image} alt={`Card ${index}`} className="card-front" />
-          </div>
-        ))}
+        {images.slice(0, totalCards).map((image, index) => {
+          const isFlipped = flippedCards.includes(index);
+          const isMatched = matchedCards.includes(index);
+          const cardClass = `card ${isFlipped ? 'flipped' : ''} ${isMatched ? 'matched' : ''}`;
+  
+          return (
+            <div
+              key={index}
+              className={cardClass}
+              onClick={() => handleClick(index)}
+            >
+              <div className="card-back"></div>
+              {isFlipped || isMatched ? (
+                <img src={image} alt={`Card ${index}`} className="card-front" />
+              ) : (
+                <div className="card-front"></div>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
-  };
+  };  
 
   return (
     <div className="container">
       <h1 className="title">Memory Game</h1>
-      {clientRendered && renderGrid()}
+      {images.length > 0 ? renderGrid() : <p>Loading...</p>}
     </div>
-  );
+  );  
 }
 
 export default Game;

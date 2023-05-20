@@ -175,15 +175,22 @@ a {
   opacity: 0;
 }
 
-.card.flipped .card-front {
+.card.flipped .card-front,
+.card.matched .card-front {
   opacity: 1;
 }
 
-.card.matched {
-  pointer-events: none;
-  background-color: #b6d7a8;
+.card.matched .card-back {
+  opacity: 1;
 }
 
+.matched .card-back {
+  background-color: transparent;
+}
+
+.matched .card-front {
+  opacity: 1;
+}
 
 .card-image {
   width: 100%;
