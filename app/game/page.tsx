@@ -12,6 +12,16 @@ function Game() {
   const [retryCount, setRetryCount] = useState(0);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
 
+  const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+  
+
   useEffect(() => {
     // Fetch or generate the array of 30 image URLs
     // Replace this with your own logic to fetch or generate the URLs
@@ -21,7 +31,8 @@ function Game() {
       const data = await response.json();
       setImages(data.images);
       */
-      setImages([
+
+      const imageArr = [
         'https://fastly.picsum.photos/id/996/200/200.jpg?hmac=nRtkfqKyD3p2uHiFO5LmGt31UcH3NKWg80H5yUkZ8_k',
         'https://fastly.picsum.photos/id/818/200/200.jpg?hmac=gfhJZngz3JDsSmE1obNFY5OeAQBVsJLED2VkwuGsC-o',
         'https://fastly.picsum.photos/id/852/200/200.jpg?hmac=4UHLpiS9j3YDnvq-w-MqnP5-ymiyvMs6BNV5ukoTRrI',
@@ -52,7 +63,8 @@ function Game() {
         'https://fastly.picsum.photos/id/380/200/200.jpg?hmac=kRl3E5LKObBjVmZbpz41OB8xNcPHPWwn_KlpTqhcaOk',
         'https://fastly.picsum.photos/id/933/200/200.jpg?hmac=OW5v0bUFqC97kOeYWLjXhU-5mkb6atERs7CrqdPlRfs',
         'https://fastly.picsum.photos/id/1035/200/200.jpg?hmac=IDuYUZQ_7a6h4pQU2k7p2nxT-MjMt4uy-p3ze94KtA4'
-      ]);
+      ];
+      setImages(shuffleArray(imageArr));
     };
 
     fetchImages();
