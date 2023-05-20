@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 function Game() {
   const [clientRendered, setClientRendered] = useState(false);
@@ -9,6 +10,7 @@ function Game() {
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedCards, setMatchedCards] = useState([]);
   const [retryCount, setRetryCount] = useState(0);
+  const [isSessionEnded, setIsSessionEnded] = useState(false);
 
   useEffect(() => {
     // Fetch or generate the array of 30 image URLs
@@ -84,19 +86,24 @@ function Game() {
       // If two cards are already flipped or the clicked card is already flipped, ignore the click
       return;
     }
-  
+
     // Flip the clicked card by adding it to the flippedCards state
     setFlippedCards((prevFlippedCards) => [...prevFlippedCards, index]);
-  
+
     if (flippedCards.length === 1) {
       // If this is the second flipped card, check for a match
+      setRetryCount((prevRetryCount) => prevRetryCount + 1);
       if (images[flippedCards[0]] === images[index]) {
         // If there is a match, add the cards to the matchedCards state
         setMatchedCards((prevMatchedCards) => [...prevMatchedCards, flippedCards[0], index]);
         setFlippedCards([]);
-  
-        // Increment the retry count
         setRetryCount((prevRetryCount) => prevRetryCount + 1);
+
+        // Check if all pairs have been matched
+        if (matchedCards.length + 2 === images.length) {
+          // End the session
+          setIsSessionEnded(true);
+        }
       } else {
         // If there is no match, flip the cards back after a short delay
         setTimeout(() => {
@@ -140,10 +147,25 @@ function Game() {
   return (
     <div className="container">
       <h1 className="title">Memory Game</h1>
-      <p>Retries: {retryCount}</p>
-      {images.length > 0 ? renderGrid() : <p>Loading...</p>}
+      {images.length > 0 ? (
+      <>
+        <p>Retries: {retryCount}</p>
+        {renderGrid()}
+        {isSessionEnded && (
+          <div className="score">
+            <p>Session Ended</p>
+            <p>Score: {((matchedCards.length / retryCount) * 100).toFixed(2)}%</p>
+            <Link legacyBehavior href="/">
+              <button onClick={() => setIsSessionEnded(false)} className="return-home-button">Return to Home</button>
+            </Link>
+          </div>
+        )}
+      </>
+      ) : (
+      <p>Loading...</p>
+      )}
     </div>
-  );  
+  );
 }
 
 export default Game;
