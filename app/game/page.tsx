@@ -100,8 +100,6 @@ function Game() {
       }
     }
   };
-  
-
 
   const renderGrid = () => {
     const gridSize = 6;
@@ -121,7 +119,7 @@ function Game() {
               className={cardClass}
               onClick={() => handleClick(index)}
             >
-              <div className="card-back"></div>
+              <div className="card-back">{isFlipped || isMatched ? '' : index + 1}</div>
               {isFlipped || isMatched ? (
                 <img src={image} alt={`Card ${index}`} className="card-front" />
               ) : (

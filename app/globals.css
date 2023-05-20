@@ -154,7 +154,13 @@ a {
 }
 
 .card-back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #0f4c81;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .card-front {
