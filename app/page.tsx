@@ -1,12 +1,20 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
 
 const MemoTestGamePage: React.FC = () => {
+  const dispatch = useDispatch();
+  const highestNatureScore = useSelector((state) => state.natureScore);
+  const highestAnimalScore = useSelector((state) => state.animalsScore);
+  const highestFoodScore = useSelector((state) => state.foodScore);
+
   // Obtener la lista de memo tests desde el backend o almacenamiento local
   const memoTests = [
-    { id: 1, name: 'Nature', highestScore: 80 },
-    { id: 2, name: 'Animals', highestScore: 90 },
-    { id: 3, name: 'Food', highestScore: 75 },
+    { id: 1, name: 'Nature', highestScore: highestNatureScore },
+    { id: 2, name: 'Animals', highestScore: highestAnimalScore },
+    { id: 3, name: 'Food', highestScore: highestFoodScore },
     // ...
   ];
 

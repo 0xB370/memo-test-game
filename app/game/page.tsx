@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -13,6 +13,7 @@ function Game() {
   const [matchedCards, setMatchedCards] = useState([]);
   const [retryCount, setRetryCount] = useState(0);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
+  const [highestScore, setHighestScore] = useState(0);
 
   const router = useRouter();
   const category = useSearchParams().get('category') || 'nature';
@@ -25,6 +26,13 @@ function Game() {
     }
     return newArray;
   };
+
+  const updateHighestScore = (score) => {
+    if (score > highestScore) {
+      setHighestScore(score);
+      localStorage.setItem('highestScore', score.toString());
+    }
+  };  
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -79,7 +87,9 @@ function Game() {
 
         if (matchedCards.length + 2 === images.length) {
           setIsSessionEnded(true);
-        }
+          const score = ((matchedCards.length / retryCount) * 100).toFixed(2);
+          updateHighestScore(score);
+        }        
       } else {
         setTimeout(() => {
           setFlippedCards([]);
