@@ -3,6 +3,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateNatureScore, updateAnimalsScore, updateFoodScore } from '../store/actions/updateScore';
 
 const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
@@ -12,11 +14,31 @@ function Game() {
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedCards, setMatchedCards] = useState([]);
   const [retryCount, setRetryCount] = useState(0);
+  const [score, setScore] = useState(0);
   const [isSessionEnded, setIsSessionEnded] = useState(false);
-  const [highestScore, setHighestScore] = useState(0);
-
   const router = useRouter();
   const category = useSearchParams().get('category') || 'nature';
+  const dispatch = useDispatch();
+  const [highestScore, setHighestScore] = useState(useSelector((state) => {
+    if (category === 'nature') {
+      return state.natureScore;
+    } else if (category === 'animals') {
+      return state.animalsScore;
+    } else if (category === 'food') {
+      return state.foodScore;
+    }
+    return 0; 
+  }));
+
+  const updateHighestScore = (score) => {
+    if (category === 'nature') {
+      dispatch(updateNatureScore(score));
+    } else if (category === 'animals') {
+      dispatch(updateAnimalsScore(score));
+    } else if (category === 'food') {
+      dispatch(updateFoodScore(score));
+    }
+  };
 
   const shuffleArray = (array) => {
     const newArray = [...array];
@@ -27,13 +49,6 @@ function Game() {
     return newArray;
   };
 
-  const updateHighestScore = (score) => {
-    if (score > highestScore) {
-      setHighestScore(score);
-      localStorage.setItem('highestScore', score.toString());
-    }
-  };  
-
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -43,7 +58,9 @@ function Game() {
         const data = await response.json();
         const imageUrls = data.map((image) => image.urls.regular);
         const imagesArr = imageUrls.flatMap((element) => [element, element]);
-        setImages(shuffleArray(imagesArr));
+        // Ordered images to test
+        setImages(imagesArr);
+        // setImages(shuffleArray(imagesArr));
       } catch (error) {
         console.error('Error fetching images:', error);
       }
@@ -87,8 +104,11 @@ function Game() {
 
         if (matchedCards.length + 2 === images.length) {
           setIsSessionEnded(true);
-          const score = ((matchedCards.length / retryCount) * 100).toFixed(2);
-          updateHighestScore(score);
+          const sc = Math.round((matchedCards.length / retryCount) * 100 * 100) / 100;
+          setScore(sc);
+          if (sc > highestScore) {
+            updateHighestScore(sc);
+          }
         }        
       } else {
         setTimeout(() => {
@@ -139,7 +159,7 @@ function Game() {
           {isSessionEnded && (
             <div className="score">
               <p>Session Ended</p>
-              <p>Score: {((matchedCards.length / retryCount) * 100).toFixed(2)}%</p>
+              <p>Score: {score}%</p>
               <Link href="/">
                 <button onClick={() => setIsSessionEnded(false)} className="return-home-button">Return to Home</button>
               </Link>

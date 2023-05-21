@@ -24,7 +24,7 @@ const MemoTestGamePage: React.FC = () => {
       <ul>
         {memoTests.map((memoTest) => (
           <li key={memoTest.id}>
-            <Link legacyBehavior href={`/game?category=${memoTest.name}`}>
+            <Link legacyBehavior href={`/game?category=${memoTest.name.toLowerCase()}`}>
               <a>
                 {memoTest.name} - Highest Score: {memoTest.highestScore}
               </a>
