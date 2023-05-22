@@ -1,8 +1,16 @@
-import { createStore } from 'redux';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
-import rootReducer from './app/store/reducers/updateScore'; 
+import updateScore from './app/store/reducers/updateScore'; 
+import gameState from './app/store/reducers/gameState'; 
 
-const store = createStore(rootReducer);
+const rootReducer = combineReducers({
+  updateScore,
+  gameState,
+});
+
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 export const wrapWithProvider = ({ element }) => (
   <Provider store={store}>{element}</Provider>

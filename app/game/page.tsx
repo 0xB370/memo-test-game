@@ -21,11 +21,11 @@ function Game() {
   const dispatch = useDispatch();
   const [highestScore, setHighestScore] = useState(useSelector((state) => {
     if (category === 'nature') {
-      return state.natureScore;
+      return state.updateScore.natureScore;
     } else if (category === 'animals') {
-      return state.animalsScore;
+      return state.updateScore.animalsScore;
     } else if (category === 'food') {
-      return state.foodScore;
+      return state.updateScore.foodScore;
     }
     return 0; 
   }));
@@ -104,6 +104,7 @@ function Game() {
 
         if (matchedCards.length + 2 === images.length) {
           setIsSessionEnded(true);
+          // The extra '* 100 / 100' is to round to 2 decimals places
           const sc = Math.round((matchedCards.length / retryCount) * 100 * 100) / 100;
           setScore(sc);
           if (sc > highestScore) {
@@ -165,6 +166,9 @@ function Game() {
               </Link>
             </div>
           )}
+          <Link href="/">
+            <button className="back-button">Back</button>
+          </Link>
         </>
       ) : (
         <p>Loading...</p>

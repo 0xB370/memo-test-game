@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const MemoTestGamePage: React.FC = () => {
   const dispatch = useDispatch();
-  const highestNatureScore = useSelector((state) => state.natureScore);
-  const highestAnimalScore = useSelector((state) => state.animalsScore);
-  const highestFoodScore = useSelector((state) => state.foodScore);
+  const highestNatureScore = useSelector((state) =>state.updateScore.natureScore);
+  const highestAnimalScore = useSelector((state) => state.updateScore.animalsScore);
+  const highestFoodScore = useSelector((state) => state.updateScore.foodScore);
 
   // Obtener la lista de memo tests desde el backend o almacenamiento local
   const memoTests = [
