@@ -1,4 +1,4 @@
-import { UPDATE_GAME_STATE } from '../actions/actionTypes';
+import { UPDATE_GAME_STATE, UPDATE_IMAGES } from '../actions/actionTypes';
 
 const initialState = {
   flippedCards: [],
@@ -6,6 +6,7 @@ const initialState = {
   retryCount: 0,
   score: 0,
   isSessionEnded: false,
+  images: [], 
 };
 
 const gameStateReducer = (state = initialState, action) => {
@@ -18,6 +19,11 @@ const gameStateReducer = (state = initialState, action) => {
         retryCount: action.payload.retryCount,
         score: action.payload.score,
         isSessionEnded: action.payload.isSessionEnded,
+      };
+    case UPDATE_IMAGES: 
+      return {
+        ...state,
+        images: action.payload.images,
       };
     default:
       return state;

@@ -1,4 +1,4 @@
-import * as actionTypes from "../actions/actionTypes";
+import { UPDATE_NATURE_SCORE, UPDATE_ANIMALS_SCORE, UPDATE_FOOD_SCORE } from "../actions/actionTypes";
 
 const initialState = {
     natureScore: 0,
@@ -8,17 +8,17 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.UPDATE_NATURE_SCORE:
+        case UPDATE_NATURE_SCORE:
             return {
                 ...state,
                 natureScore: action.score
             };
-        case actionTypes.UPDATE_ANIMALS_SCORE:
+        case UPDATE_ANIMALS_SCORE:
             return {
                 ...state,
                 animalsScore: action.score
             };
-        case actionTypes.UPDATE_FOOD_SCORE:
+        case UPDATE_FOOD_SCORE:
             return {
                 ...state,
                 foodScore: action.score

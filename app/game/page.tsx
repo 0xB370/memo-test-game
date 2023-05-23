@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNatureScore, updateAnimalsScore, updateFoodScore } from '../store/actions/updateScore';
-import { updateGameState } from '../store/actions/gameState';
+import { updateGameState, updateImages } from '../store/actions/gameState';
 
 const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
 function Game() {
   const [clientRendered, setClientRendered] = useState(false);
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(useSelector((state) => state.gameState.images));
   const [flippedCards, setFlippedCards] = useState(useSelector((state) => state.gameState.flippedCards));
   const [matchedCards, setMatchedCards] = useState(useSelector((state) => state.gameState.matchedCards));
   const [retryCount, setRetryCount] = useState(useSelector((state) => state.gameState.retryCount));
@@ -52,24 +52,26 @@ function Game() {
   };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await fetch(
-          `https://api.unsplash.com/photos/random?count=15&query=${category}&client_id=${unsplashAccessKey}`
-        );
-        const data = await response.json();
-        const imageUrls = data.map((image) => image.urls.regular);
-        const imagesArr = imageUrls.flatMap((element) => [element, element]);
-        // Ordered images to test
-        setImages(imagesArr);
-        // setImages(shuffleArray(imagesArr));
-      } catch (error) {
-        console.error('Error fetching images:', error);
-      }
-    };
-
-    fetchImages();
-  }, [category]);
+    if (retryCount === 0) {
+      const fetchImages = async () => {
+        try {
+          const response = await fetch(
+            `https://api.unsplash.com/photos/random?count=15&query=${category}&client_id=${unsplashAccessKey}`
+          );
+          const data = await response.json();
+          const imageUrls = data.map((image) => image.urls.regular);
+          // Ordered images to test
+          // const imagesArr = imageUrls.flatMap((element) => [element, element]);
+          const imagesArr = shuffleArray(imageUrls.flatMap((element) => [element, element]));
+          setImages(imagesArr);
+          dispatch(updateImages({ images: imagesArr }));
+        } catch (error) {
+          console.error('Error fetching images:', error);
+        }
+      };
+      fetchImages();
+    }
+  }, [category, retryCount]);
 
   useEffect(() => {
     setClientRendered(true);

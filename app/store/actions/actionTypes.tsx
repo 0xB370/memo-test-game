@@ -5,3 +5,4 @@ export const UPDATE_FOOD_SCORE = "UPDATE_FOOD_SCORE";
 
 // Game Status Actions
 export const UPDATE_GAME_STATE = "UPDATE_GAME_STATE";
+export const UPDATE_IMAGES = "UPDATE_IMAGES";
