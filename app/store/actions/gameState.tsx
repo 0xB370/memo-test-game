@@ -1,4 +1,6 @@
+import * as actionTypes from "./actionTypes";
+
 export const updateGameState = (gameState) => ({
-    type: 'UPDATE_GAME_STATE',
+    type: actionTypes.UPDATE_GAME_STATE,
     payload: gameState,
 });

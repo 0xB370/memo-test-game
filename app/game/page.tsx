@@ -5,17 +5,19 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNatureScore, updateAnimalsScore, updateFoodScore } from '../store/actions/updateScore';
+import { updateGameState } from '../store/actions/gameState';
 
 const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
 function Game() {
   const [clientRendered, setClientRendered] = useState(false);
   const [images, setImages] = useState([]);
-  const [flippedCards, setFlippedCards] = useState([]);
-  const [matchedCards, setMatchedCards] = useState([]);
-  const [retryCount, setRetryCount] = useState(0);
-  const [score, setScore] = useState(0);
-  const [isSessionEnded, setIsSessionEnded] = useState(false);
+  const [flippedCards, setFlippedCards] = useState(useSelector((state) => state.gameState.flippedCards));
+  const [matchedCards, setMatchedCards] = useState(useSelector((state) => state.gameState.matchedCards));
+  const [retryCount, setRetryCount] = useState(useSelector((state) => state.gameState.retryCount));
+  const [score, setScore] = useState(useSelector((state) => state.gameState.score));
+  const [isSessionEnded, setIsSessionEnded] = useState(useSelector((state) => state.gameState.isSessionEnded));
+  const gameState = useSelector((state) => state.gameState);
   const router = useRouter();
   const category = useSearchParams().get('category') || 'nature';
   const dispatch = useDispatch();
@@ -110,6 +112,8 @@ function Game() {
           if (sc > highestScore) {
             updateHighestScore(sc);
           }
+          // Dispatch action to save the state in Redux
+          dispatch(updateGameState({ retryCount: retryCount }));
         }        
       } else {
         setTimeout(() => {
@@ -117,6 +121,16 @@ function Game() {
         }, 1000);
       }
     }
+  };
+
+  const handleBackClick = () => {
+    dispatch(updateGameState({
+      flippedCards,
+      matchedCards,
+      retryCount,
+      score,
+      isSessionEnded,
+    }))
   };
 
   const renderGrid = () => {
@@ -167,7 +181,7 @@ function Game() {
             </div>
           )}
           <Link href="/">
-            <button className="back-button">Back</button>
+            <button className="back-button" onClick={handleBackClick}>Back</button>
           </Link>
         </>
       ) : (

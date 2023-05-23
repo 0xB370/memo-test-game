@@ -9,6 +9,10 @@ const MemoTestGamePage: React.FC = () => {
   const highestNatureScore = useSelector((state) =>state.updateScore.natureScore);
   const highestAnimalScore = useSelector((state) => state.updateScore.animalsScore);
   const highestFoodScore = useSelector((state) => state.updateScore.foodScore);
+  useSelector((state) => {
+    console.log('state');
+    console.log(state);
+  });
 
   // Obtener la lista de memo tests desde el backend o almacenamiento local
   const memoTests = [
