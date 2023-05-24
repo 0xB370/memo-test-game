@@ -1,4 +1,4 @@
-import { UPDATE_GAME_STATE, UPDATE_IMAGES } from "./actionTypes";
+import { UPDATE_GAME_STATE, UPDATE_IMAGES, RESET_GAME_STATE } from "./actionTypes";
 
 export const updateGameState = (category, gameState) => {
     return {
@@ -16,6 +16,15 @@ export const updateImages = (category, images) => {
         payload: {
         category,
         images,
+        },
+    };
+};
+
+export const resetGameState = (category) => {
+    return {
+        type: RESET_GAME_STATE,
+        payload: {
+        category
         },
     };
 };

@@ -5,12 +5,11 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateNatureScore, updateAnimalsScore, updateFoodScore } from '../store/actions/updateScore';
-import { updateGameState, updateImages } from '../store/actions/gameState';
+import { updateGameState, updateImages, resetGameState } from '../store/actions/gameState';
 
 const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
 function Game() {
-  const [clientRendered, setClientRendered] = useState(false);
   const router = useRouter();
   const category = useSearchParams().get('category') || 'nature';
   const [images, setImages] = useState(useSelector((state) => state.gameState[category].images));
@@ -74,10 +73,6 @@ function Game() {
   }, [category]);
 
   useEffect(() => {
-    setClientRendered(true);
-  }, []);
-
-  useEffect(() => {
     if (flippedCards.length === 2) {
       const [card1, card2] = flippedCards;
       if (images[card1] === images[card2]) {
@@ -115,7 +110,7 @@ function Game() {
             updateHighestScore(sc);
           }
           // Dispatch action to save the state in Redux
-          dispatch(updateGameState({ retryCount: retryCount }));
+          dispatch(resetGameState(category));
         }        
       } else {
         setTimeout(() => {
