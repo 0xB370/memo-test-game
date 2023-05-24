@@ -11,15 +11,15 @@ const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
 function Game() {
   const [clientRendered, setClientRendered] = useState(false);
-  const [images, setImages] = useState(useSelector((state) => state.gameState.images));
-  const [flippedCards, setFlippedCards] = useState(useSelector((state) => state.gameState.flippedCards));
-  const [matchedCards, setMatchedCards] = useState(useSelector((state) => state.gameState.matchedCards));
-  const [retryCount, setRetryCount] = useState(useSelector((state) => state.gameState.retryCount));
-  const [score, setScore] = useState(useSelector((state) => state.gameState.score));
-  const [isSessionEnded, setIsSessionEnded] = useState(useSelector((state) => state.gameState.isSessionEnded));
-  const gameState = useSelector((state) => state.gameState);
   const router = useRouter();
   const category = useSearchParams().get('category') || 'nature';
+  const [images, setImages] = useState(useSelector((state) => state.gameState[category].images));
+  const [flippedCards, setFlippedCards] = useState(useSelector((state) => state.gameState[category].flippedCards));
+  const [matchedCards, setMatchedCards] = useState(useSelector((state) => state.gameState[category].matchedCards));
+  const [retryCount, setRetryCount] = useState(useSelector((state) => state.gameState[category].retryCount));
+  const [score, setScore] = useState(useSelector((state) => state.gameState[category].score));
+  const [isSessionEnded, setIsSessionEnded] = useState(useSelector((state) => state.gameState.isSessionEnded));
+  const gameState = useSelector((state) => state.gameState[category]);
   const dispatch = useDispatch();
   const [highestScore, setHighestScore] = useState(useSelector((state) => {
     if (category === 'nature') {
@@ -61,17 +61,17 @@ function Game() {
           const data = await response.json();
           const imageUrls = data.map((image) => image.urls.regular);
           // Ordered images to test
-          // const imagesArr = imageUrls.flatMap((element) => [element, element]);
-          const imagesArr = shuffleArray(imageUrls.flatMap((element) => [element, element]));
+          const imagesArr = imageUrls.flatMap((element) => [element, element]);
+          // const imagesArr = shuffleArray(imageUrls.flatMap((element) => [element, element]));
           setImages(imagesArr);
-          dispatch(updateImages({ images: imagesArr }));
+          dispatch(updateImages(category, imagesArr ));
         } catch (error) {
           console.error('Error fetching images:', error);
         }
       };
       fetchImages();
     }
-  }, [category, retryCount]);
+  }, [category]);
 
   useEffect(() => {
     setClientRendered(true);
@@ -126,7 +126,7 @@ function Game() {
   };
 
   const handleBackClick = () => {
-    dispatch(updateGameState({
+    dispatch(updateGameState(category, {
       flippedCards,
       matchedCards,
       retryCount,
