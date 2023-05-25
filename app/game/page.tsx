@@ -22,6 +22,14 @@ function Game() {
   const [isSessionEnded, setIsSessionEnded] = useState(useSelector((state) => state.gameState.isSessionEnded));
   const gameState = useSelector((state) => state.gameState[category]);
   const dispatch = useDispatch();
+  const initialState = {
+    flippedCards: [],
+    matchedCards: [],
+    retryCount: 0,
+    score: 0,
+    isSessionEnded: false,
+    images: [],
+  };
   const [highestScore, setHighestScore] = useState(useSelector((state) => {
     if (category === 'nature') {
       return state.updateScore.natureScore;
@@ -45,6 +53,54 @@ function Game() {
       localStorage.setItem('gameState', JSON.stringify({
         ...fullGameState,
         [category]: gameState
+      }));
+    }
+  }
+
+  const resetSessionData = () => {
+    dispatch(updateGameState(category, initialState));
+    const storedSessionData = localStorage.getItem('gameState');
+    if (storedSessionData) {
+      const parsedSessionData = JSON.parse(storedSessionData);
+      console.log("Esto pasa");
+      console.log(JSON.stringify({
+        ...parsedSessionData,
+        [category]: {
+          flippedCards: [],
+          matchedCards: [],
+          retryCount: 0,
+          score: 0,
+          isSessionEnded: false,
+          images: [],
+        }
+      }));
+      console.log('category');
+      console.log(category);
+            
+      
+      
+      localStorage.setItem('gameState', JSON.stringify({
+        ...parsedSessionData,
+        [category]: {
+          flippedCards: [],
+          matchedCards: [],
+          retryCount: 0,
+          score: 0,
+          isSessionEnded: false,
+          images: [],
+        }
+      }));
+    } else {
+      localStorage.setItem('gameState', JSON.stringify({
+        ...fullGameState,
+        [category]: {
+          flippedCards: [],
+          matchedCards: [],
+          retryCount: 0,
+          score: 0,
+          isSessionEnded: false,
+          images: [],
+        }
       }));
     }
   }
@@ -198,9 +254,9 @@ function Game() {
           if (sc > highestScore) {
             updateHighestScore(sc);
           }
+          resetSessionData();
           // Dispatch action to save the state in Redux
           dispatch(resetGameState(category));
-          storeSessionData();
         }        
       } else {
         setTimeout(() => {
@@ -298,7 +354,7 @@ function Game() {
               <p>Session Ended</p>
               <p>Score: {score}%</p>
               <Link href="/">
-                <button onClick={() => setIsSessionEnded(false)} className="return-home-button">Return to Home</button>
+                <button onClick={resetSessionData} className="return-home-button">Return to Home</button>
               </Link>
             </div>
           )}
