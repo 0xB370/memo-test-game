@@ -62,23 +62,6 @@ function Game() {
     const storedSessionData = localStorage.getItem('gameState');
     if (storedSessionData) {
       const parsedSessionData = JSON.parse(storedSessionData);
-      console.log("Esto pasa");
-      console.log(JSON.stringify({
-        ...parsedSessionData,
-        [category]: {
-          flippedCards: [],
-          matchedCards: [],
-          retryCount: 0,
-          score: 0,
-          isSessionEnded: false,
-          images: [],
-        }
-      }));
-      console.log('category');
-      console.log(category);
-            
-      
-      
       localStorage.setItem('gameState', JSON.stringify({
         ...parsedSessionData,
         [category]: {
@@ -113,7 +96,20 @@ function Game() {
     } else if (category === 'food') {
       dispatch(updateFoodScore(score));
     }
-    localStorage.setItem('highestScores', JSON.stringify(fullHighestScores));
+    const storedHighestScores = localStorage.getItem('highestScores');
+    const categoryScore = category + 'Score';
+    if (storedHighestScores) {
+      const parsedHighestScores = JSON.parse(storedHighestScores);
+      localStorage.setItem('highestScores', JSON.stringify({
+        ...parsedHighestScores,
+        [categoryScore]: score
+      }));
+    } else {
+      localStorage.setItem('highestScores', JSON.stringify({
+        ...fullHighestScores,
+        [categoryScore]: score
+      }));
+    }
   };
 
   const shuffleArray = (array) => {
@@ -144,14 +140,8 @@ function Game() {
     };
     // Retrieve the session data from Local Storage
     const sessionData = localStorage.getItem('gameState');
-    console.log("storedSessionData");
-    console.log(sessionData);
     if (sessionData) {
       const parsedSessionData = JSON.parse(sessionData);
-      console.log('parsedSessionData');
-      console.log(parsedSessionData);
-      
-      
       if (parsedSessionData[category].images.length > 0) {
         setFlippedCards(parsedSessionData[category].flippedCards);
         setMatchedCards(parsedSessionData[category].matchedCards);
@@ -196,10 +186,6 @@ function Game() {
       const parsedGameState = JSON.parse(storedGameState);
       setFullGameState(parsedGameState);
     }
-    console.log('flippedCards');
-    console.log(flippedCards);
-    
-    
     if (flippedCards.length === 2) {
       const [card1, card2] = flippedCards;
       if (images[card1] === images[card2]) {
@@ -263,10 +249,6 @@ function Game() {
           setFlippedCards([]);
         }, 1000);
       }
-      console.log('retryCount desde handleClick');
-      console.log(retryCount);
-      
-      
       dispatch(updateGameState(category, {
         flippedCards,
         matchedCards,
@@ -282,21 +264,6 @@ function Game() {
       score,
       isSessionEnded,
     }));
-    /*
-    console.log('gameState desde handleClick');
-    console.log(gameState);
-    localStorage.setItem('gameState', JSON.stringify({
-      ...fullGameState,
-      [category]: {
-        ...fullGameState[category],
-          flippedCards,
-          matchedCards,
-          retryCount,
-          score,
-          isSessionEnded,
-      }
-    }));
-    */
     storeSessionData();
   };
 

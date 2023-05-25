@@ -10,12 +10,34 @@ const MemoTestGamePage: React.FC = () => {
   const highestAnimalScore = useSelector((state) => state.updateScore.animalsScore);
   const highestFoodScore = useSelector((state) => state.updateScore.foodScore);
 
-  // Obtener la lista de memo tests desde el backend o almacenamiento local
+  const getHighestScores = () => {
+    const highestScores = localStorage.getItem('highestScores');
+    if (highestScores) {
+      const parsedHighestScores = JSON.parse(highestScores);
+      return {
+        natureScore: parsedHighestScores.natureScore,
+        animalsScore: parsedHighestScores.animalsScore,
+        foodScore: parsedHighestScores.foodScore,
+      };
+    }
+    return {
+      natureScore: 0,
+      animalsScore: 0,
+      foodScore: 0,
+    };
+    
+    
+  }
+
+  const highestScores = getHighestScores();
+  const highestNatureScoreDisp = highestScores.natureScore;
+  const highestAnimalScoreDisp = highestScores.animalsScore;
+  const highestFoodScoreDisp = highestScores.foodScore;
+
   const memoTests = [
-    { id: 1, name: 'Nature', highestScore: highestNatureScore },
-    { id: 2, name: 'Animals', highestScore: highestAnimalScore },
-    { id: 3, name: 'Food', highestScore: highestFoodScore },
-    // ...
+    { id: 1, name: 'Nature', highestScore: highestNatureScoreDisp },
+    { id: 2, name: 'Animals', highestScore: highestAnimalScoreDisp },
+    { id: 3, name: 'Food', highestScore: highestFoodScoreDisp },
   ];
 
   return (
@@ -26,7 +48,7 @@ const MemoTestGamePage: React.FC = () => {
           <li key={memoTest.id}>
             <Link legacyBehavior href={`/game?category=${memoTest.name.toLowerCase()}`}>
               <a>
-                {memoTest.name} - Highest Score: {memoTest.highestScore}
+                {memoTest.name} - Highest Score: {memoTest.highestScore}%
               </a>
             </Link>
           </li>
