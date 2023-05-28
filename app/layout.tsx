@@ -1,5 +1,7 @@
 'use client';
 
+import { ApolloProvider } from '@apollo/client';
+import client from '../apolloClient';
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { Provider } from 'react-redux';
@@ -21,9 +23,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Provider store={store}>
-        <body className={inter.className}>{children}</body>
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <body className={inter.className}>{children}</body>
+        </Provider>
+      </ApolloProvider>
     </html>
   )
 }
