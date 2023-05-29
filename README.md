@@ -1,4 +1,4 @@
-# Memo Test Game - Backend
+# Memo Test Game
 
 Memory Game made using Next.js 13, in which the user has to match pairs of the same cards among several ones.
 
