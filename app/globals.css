@@ -249,3 +249,13 @@ a {
 .back-button:hover {
   background-color: #143d68;
 }
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 40px;
+  text-align: center;
+}

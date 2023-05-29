@@ -4,14 +4,29 @@ import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import { updateNatureScore, updateAnimalsScore, updateFoodScore } from '../store/actions/updateScore';
 import { updateGameState, updateImages, resetGameState } from '../store/actions/gameState';
 
 const unsplashAccessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
+const GET_MEMO_TESTS = gql`
+  query MemoTest($id: ID!) {
+    memoTest(id: $id) {
+      id
+      name
+      images {
+        id
+        url
+      }
+    }
+  }
+`;
+
 function Game() {
   const router = useRouter();
   const category = useSearchParams().get('category') || 'nature';
+  const id = useSearchParams().get('id') || '1';
   const [fullGameState, setFullGameState] = useState(useSelector((state) => state.gameState));
   const [fullHighestScores, setFullHighestScores] = useState(useSelector((state) => state.updateScore));
   const [images, setImages] = useState(useSelector((state) => state.gameState[category].images));
@@ -22,6 +37,11 @@ function Game() {
   const [isSessionEnded, setIsSessionEnded] = useState(useSelector((state) => state.gameState.isSessionEnded));
   const gameState = useSelector((state) => state.gameState[category]);
   const dispatch = useDispatch();
+  const { loading, error, data } = useQuery(GET_MEMO_TESTS, {
+    variables: {
+      id
+    },
+  });
   const initialState = {
     flippedCards: [],
     matchedCards: [],
@@ -176,7 +196,6 @@ function Game() {
         [category]: gameState
       }));
     }
-    // fetchImages();
   }, [category]);
 
   useEffect(() => {
@@ -312,11 +331,12 @@ function Game() {
   return (
     <div className="container">
       <h1 className="title">Memory Game</h1>
-      {images.length > 0 ? (
+      {error ? (<p>Error: {error.message}</p>) :
+      (images.length > 0 || loading )? (
         <>
           <p>Retries: {retryCount}</p>
           {renderGrid()}
-          {isSessionEnded && (
+          {isSessionEnded ? (
             <div className="score">
               <p>Session Ended</p>
               <p>Score: {score}%</p>
@@ -324,10 +344,12 @@ function Game() {
                 <button onClick={resetSessionData} className="return-home-button">Return to Home</button>
               </Link>
             </div>
-          )}
+          )
+          :
           <Link href="/">
             <button className="back-button" onClick={handleBackClick}>Back</button>
           </Link>
+          }
         </>
       ) : (
         <p>Loading...</p>
