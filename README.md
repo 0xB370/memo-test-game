@@ -8,9 +8,15 @@ Memory Game made using Next.js 13, in which the user has to match pairs of the s
 
   [memo-test-game-backend](https://github.com/0xB370/memo-test-game-backend)
 
-- Clone this repository and run the development server:
+- Clone this repository, create an **.env.local** file in the root of the project, which should have an [unsplash](https://unsplash.com/) access key (since it is used as image API).
+
+        NEXT_PUBLIC_UNSPLASH_ACCESS_KEY = 'your_unsplash_access_key'
+
+- Install dependencies and run the development server:
 
   ```bash
+  npm install
+  
   npm run dev
   # or
   yarn dev
