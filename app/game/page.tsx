@@ -150,8 +150,8 @@ function Game() {
         const data = await response.json();
         const imageUrls = data.map((image) => image.urls.regular);
         // Ordered images to test
-        const imagesArr = imageUrls.flatMap((element) => [element, element]);
-        // const imagesArr = shuffleArray(imageUrls.flatMap((element) => [element, element]));
+        // const imagesArr = imageUrls.flatMap((element) => [element, element]);
+        const imagesArr = shuffleArray(imageUrls.flatMap((element) => [element, element]));
         setImages(imagesArr);
         dispatch(updateImages(category, imagesArr ));
       } catch (error) {

@@ -25,3 +25,5 @@ Memory Game made using Next.js 13, in which the user has to match pairs of the s
   ```
 
 - Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+_Note: For testing purposes, you can uncomment the line next to "// Ordered images to test" in game/page.tsx and comment out the next one. With these changes, matching images will appear next to each other._
